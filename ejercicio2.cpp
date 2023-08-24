@@ -57,12 +57,14 @@ int main() {
     // Ordenar los números en paralelo //CAMBIO 1
     #pragma omp parallel
     {
-        #pragma omp single
-        {
-            std::sort(readNumbers, readNumbers + limit);
+        #pragma omp for
+        for (int i = 0; i < limit; ++i) {
+            #pragma omp critical
+            {
+                std::sort(readNumbers, readNumbers + limit);
+            }
         }
     }
-
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers.csv");
     for (int i = 0; i < limit; ++i) {
@@ -81,10 +83,10 @@ int main() {
     auto end_time = std::chrono::high_resolution_clock::now();
 
     // Calculamos la duración total de la ejecución en segundos
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
     // Imprimimos el tiempo de ejecución en segundos
-    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl
+    std::cout << "Tiempo de ejecución: " << duration.count() << " microsegundos." << std::endl;
 
 
     return 0;
