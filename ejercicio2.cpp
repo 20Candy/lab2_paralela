@@ -75,7 +75,7 @@ int main() {
         }
     }
     outFile.close(); // Cerrar el archivo después del bucle
-    
+
     // Liberar la memoria
     delete[] numbers;
 
@@ -100,7 +100,6 @@ int main() {
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
-    #pragma omp parallel for    // CAMBIO 4: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         sortedFile << readNumbers[i];
         if (i < N - 1) {
