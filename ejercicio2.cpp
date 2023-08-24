@@ -40,19 +40,9 @@ void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const
         }
     }
         
-    // ------------CAMBIO - VERSION 2----------------
-    #pragma omp parallel
-    {
-        #pragma omp sections                // Crea dos secciones paralelas para ordenar los dos bloques
-        {
-            par_qsort(data, lo, h);         // Ordena el bloque izquierdo
-        }
-        
-        #pragma omp sections
-        {
-            par_qsort(data, l, hi);         // Ordena el bloque derecho
-        }
-    }
+    // Recursive call
+    par_qsort(data, lo, h);
+    par_qsort(data, l, hi);
 
 }
 
