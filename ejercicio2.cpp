@@ -40,13 +40,8 @@ void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const
     }
     
     //recursive call
-    #pragma omp parallel sections
-    {
-        #pragma omp section
-        par_qsort(data, lo, h);
-        #pragma omp section
-        par_qsort(data, l, hi);
-    }
+    par_qsort(data, lo, h);
+    par_qsort(data, l, hi);
 
 }
 
@@ -102,11 +97,7 @@ int main() {
     inFile.close();
 
     // Ordenar los números usando ejemplo de Sebastián
-    #pragma omp parallel
-    {
-        #pragma omp single nowait
-        par_qsort(readNumbers, 0, N - 1);
-    }
+    par_qsort(readNumbers, 0, N - 1);
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
