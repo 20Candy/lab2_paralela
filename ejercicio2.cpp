@@ -122,8 +122,6 @@ int main() {
     #pragma omp parallel for                    // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
-
-        #pragma omp critical                    // Critical: No se lea el mismo número dos veces
         inFile >> readNumbers[i] >> comma;      // aún no importa el orden.
     }
     inFile.close();
@@ -138,19 +136,12 @@ int main() {
     
     // ------------CAMBIO 4----------------
     // Escribir los números ordenados en otro archivo
-    std::ofstream sortedFile("sorted_numbers_P.csv");
-    #pragma omp parallel ordered             // CAMBIO 4: Paralelizar el bucle en bloques ordenados
-    {                  
-        std::string localBuffer2;           // Cada hilo tiene su propio buffer
-
-        #pragma omp for                     // Se paraleliza el bucle
-        for (int i = 0; i < N; ++i) {
-            localBuffer2 += std::to_string(numbers[i]);      // Cada hilo escribe en su buffer
-            localBuffer2 += ",";
-        }
-
-        #pragma omp ordered                     // Ordered: Se escriben los buffers en orden
-        sortedFile << localBuffer2;             // Se escribe el buffer del hilo en el archivo.
+    std::ofstream sortedFile("sorted_numbers_S.csv");
+    for (int i = 0; i < N; ++i) {
+        std::string output = std::to_string(readNumbers[i]);
+        output += ",";
+        
+        sortedFile << output;
     }
 
     // ------------ORIGINAL (CAMBIO 4)----------------
