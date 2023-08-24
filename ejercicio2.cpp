@@ -63,6 +63,7 @@ int main() {
     // Declaración y reserva de memoria para 'numbers'
     int* numbers = new int[N]; 
 
+    // ------------CAMBIO 1----------------
     // Generar N números aleatorios en paralelo 
     #pragma omp parallel for                //CAMBIO 1: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
@@ -70,17 +71,42 @@ int main() {
         numbers[i] = distribution(gen);
     }
 
+    // ------------ORIGINAL (CAMBIO 1)----------------
+    // for (int i = 0; i < N; ++i) {
+    //     std::uniform_int_distribution<int> distribution(1, posibles_elementos);
+    //     numbers[i] = distribution(gen);
+    // }
+
+
+
+    // ------------CAMBIO 2----------------
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv");
-    #pragma omp parallel for                // CAMBIO 2: Paralelizar el bucle
-    for (int i = 0; i < N; ++i) {
-        std::string output = std::to_string(numbers[i]);
-        output += ",";
+    #pragma omp parallel {                  // CAMBIO 2: Paralelizar el bucle
+        std::string localBuffer;            // Cada hilo tiene su propio buffer
 
-        #pragma omp master                  // Master: Solo el master thread escribe, el resto calcula
-        outFile << output;                  // aún no importa el orden.
+        #pragma omp for                     // Se paraleliza el bucle, no importa el orden
+        for (int i = 0; i < N; ++i) {
+            localBuffer += std::to_string(numbers[i]);      // Cada hilo escribe en su buffer
+            localBuffer += ",";
+        }
+
+        #pragma omp critical                // Critical: Solo un hilo escribe a la vez
+        outFile << localBuffer;             // Se escribe el buffer del hilo en el archivo.
     }
     outFile.close();
+
+    // ------------ORIGINAL (CAMBIO 2)----------------
+    // std::ofstream outFile("random_numbers_S.csv");
+    // for (int i = 0; i < N; ++i) {
+    //     std::string output = std::to_string(numbers[i]);
+    //     output += ",";
+        
+    //     outFile << output;
+    // }
+    // outFile.close();
+
+
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_P.csv");
@@ -89,6 +115,7 @@ int main() {
         return 1;
     }
 
+    // ------------CAMBIO 3----------------
     // Leer los números en un arreglo
     int* readNumbers = new int[N];
     #pragma omp parallel for                    // CAMBIO 3: Paralelizar el bucle
