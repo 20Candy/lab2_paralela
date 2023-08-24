@@ -139,11 +139,11 @@ int main() {
     // ------------CAMBIO 4----------------
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
-    #pragma omp parallel                    // CAMBIO 4: Paralelizar el bucle en bloques
+    #pragma omp parallel ordered             // CAMBIO 4: Paralelizar el bucle en bloques ordenados
     {                  
         std::string localBuffer2;           // Cada hilo tiene su propio buffer
 
-        #pragma omp for ordered             // Se paraleliza el bucle, SI importa el orden
+        #pragma omp for                     // Se paraleliza el bucle
         for (int i = 0; i < N; ++i) {
             localBuffer2 += std::to_string(numbers[i]);      // Cada hilo escribe en su buffer
             localBuffer2 += ",";
