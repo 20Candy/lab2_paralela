@@ -75,6 +75,9 @@ int main() {
         }
     }
     outFile.close(); // Cerrar el archivo después del bucle
+    
+    // Liberar la memoria
+    delete[] numbers;
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_P.csv");
@@ -107,7 +110,6 @@ int main() {
     sortedFile.close();
 
     // Liberar la memoria
-    delete[] numbers;
     delete[] readNumbers;
 
     // Obtenemos el tiempo de finalización
