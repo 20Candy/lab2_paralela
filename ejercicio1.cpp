@@ -52,7 +52,7 @@ int main() {
     auto start_time = std::chrono::high_resolution_clock::now();
 
     // Seed basado en la hora actual
-    std::random_device rd;
+    unsigned int seed = 42;
     std::mt19937 gen(rd());
 
     // Definir el rango de números aleatorios
