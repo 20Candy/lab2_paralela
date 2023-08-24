@@ -70,17 +70,25 @@ int main() {
         numbers[i] = distribution(gen);
     }
 
+    // Definir un lock para escribir en el archivo
+    omp_lock_t fileLock;
+    omp_init_lock(&fileLock);  // Inicializar el lock
+
     // Escribir los números aleatorios en un archivo
-    std::ofstream outFile("random_numbers_P.csv"); 
-    #pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
+    std::ofstream outFile("random_numbers_P.csv");
+    #pragma omp parallel for        // CAMBIO 2: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
-        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
+        omp_set_lock(&fileLock);    // Bloquear antes de escribir en el archivo
         outFile << numbers[i];
         if (i < N - 1) {
             outFile << ",";
         }
+        omp_unset_lock(&fileLock);  // Desbloquear después de escribir en el archivo
     }
-    outFile.close(); // Cerrar el archivo después del bucle
+
+    omp_destroy_lock(&fileLock);  // Destruir el lock
+    outFile.close();
+
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_P.csv");
@@ -100,17 +108,24 @@ int main() {
 
     // Ordenar los números usando ejemplo de Sebastián
     par_qsort(readNumbers, 0, N - 1);
+
+    // Definir un lock para escribir en el archivo
+    omp_lock_t fileLock;
+    omp_init_lock(&fileLock);  // Inicializar el lock
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
     #pragma omp parallel for    // CAMBIO 4: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
-        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
+        omp_set_lock(&fileLock);    // Bloquear antes de escribir en el archivo
         sortedFile << readNumbers[i];
         if (i < N - 1) {
             sortedFile << ",";
         }
+        omp_unset_lock(&fileLock);  // Desbloquear después de escribir en el archivo
     }
+    
+    omp_destroy_lock(&fileLock);  // Destruir el lock
     sortedFile.close();
 
     // Liberar la memoria
