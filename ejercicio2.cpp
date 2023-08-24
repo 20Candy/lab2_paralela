@@ -77,7 +77,7 @@ int main() {
         std::string output = std::to_string(numbers[i]);
         output += ",";
 
-        #pragma omp critical                // Critical: Solo escriba un hilo a la vez
+        #pragma omp master                  // Master: Solo el master thread escribe, el resto calcula
         outFile << output;                  // aún no importa el orden.
     }
     outFile.close();
