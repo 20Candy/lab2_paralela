@@ -23,27 +23,32 @@ int compare (const int * a, const int * b) //what is it returning?
 
 void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const int*))
 {
-    if(lo > hi) return;
+     if(lo > hi) return;
     int l = lo;
     int h = hi;
     int p = data[(hi + lo)/2];
 
-    while(l <= h){
-        while((data[l] - p) < 0) l++;
-        while((data[h] - p) > 0) h--;
-        if(l<=h){
-            //swap
-            int tmp = data[l];
-            data[l] = data[h];
-            data[h] = tmp;
-            l++; h--;
+    // ------------CAMBIO - VERSION 2----------------
+    #pragma omp parallel                // Se paraleliza el bloque
+    {
+        while (l <= h) {
+            while ((data[l] - p) < 0) l++;
+            while ((data[h] - p) > 0) h--;
+            if (l <= h) {
+                // Swap
+                int tmp = data[l];
+                data[l] = data[h];
+                data[h] = tmp;
+                l++; h--;
+            }
         }
-    }
-    
-    //recursive call
-    par_qsort(data, lo, h);
-    par_qsort(data, l, hi);
 
+        #pragma omp sections                // Crea dos secciones paralelas
+        par_qsort(data, lo, h);             // para ordenar los dos bloques
+
+        #pragma omp sections
+        par_qsort(data, l, hi);
+    }
 }
 
 // -----MAIN-----
@@ -63,7 +68,7 @@ int main() {
     // Declaración y reserva de memoria para 'numbers'
     int* numbers = new int[N]; 
 
-    // ------------CAMBIO 1----------------
+    // ------------CAMBIO 1 - VERSION 1----------------
     // Generar N números aleatorios en paralelo 
     #pragma omp parallel for                // Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
@@ -71,7 +76,7 @@ int main() {
         numbers[i] = distribution(gen);
     }
 
-    // ------------ORIGINAL (CAMBIO 1)----------------
+    // ------------ORIGINAL (CAMBIO 1 - VERSION 1)----------------
     // for (int i = 0; i < N; ++i) {
     //     std::uniform_int_distribution<int> distribution(1, posibles_elementos);
     //     numbers[i] = distribution(gen);
@@ -79,7 +84,7 @@ int main() {
 
 
 
-    // ------------CAMBIO 2----------------
+    // ------------CAMBIO 2 - VERSION 1----------------
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv");
     #pragma omp parallel                    // Paralelizar en bloques
@@ -100,7 +105,7 @@ int main() {
         outFile << localBuffer;
     }
 
-    // ------------ORIGINAL (CAMBIO 2)----------------
+    // ------------ORIGINAL (CAMBIO 2 - VERSION 1)----------------
     // std::ofstream outFile("random_numbers_S.csv");
     // for (int i = 0; i < N; ++i) {
     //     std::string output = std::to_string(numbers[i]);
@@ -120,7 +125,7 @@ int main() {
         return 1;
     }
 
-    // ------------CAMBIO 3----------------
+    // ------------CAMBIO 3 - VERSION 1----------------
     // Leer los números en un arreglo
     int* readNumbers = new int[N];
     #pragma omp parallel for                    // Paralelizar el bucle
@@ -137,7 +142,7 @@ int main() {
 
     }
 
-    // ------------ORIGINAL (CAMBIO 3)----------------
+    // ------------ORIGINAL (CAMBIO 3 - VERSION 1)----------------
     // int* readNumbers = new int[N];
     // for (int i = 0; i < N; ++i) {
     //     char comma;
@@ -151,7 +156,7 @@ int main() {
     // Ordenar los números usando ejemplo de Sebastián
     par_qsort(readNumbers, 0, N - 1);
     
-    // ------------CAMBIO 4----------------
+    // ------------CAMBIO 4 - VERSION 1----------------
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_S.csv");
 
@@ -185,7 +190,7 @@ int main() {
     delete[] localBuffers;          // Liberar memoria
     sortedFile.close();
 
-    // ------------ORIGINAL (CAMBIO 4)----------------
+    // ------------ORIGINAL (CAMBIO 4 - VERSION 1)----------------
     // std::ofstream sortedFile("sorted_numbers_S.csv");
     // for (int i = 0; i < N; ++i) {
     //     std::string output = std::to_string(readNumbers[i]);
