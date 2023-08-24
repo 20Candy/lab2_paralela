@@ -58,16 +58,11 @@ int main() {
     inFile.close();
 
     // Ordenar los números en paralelo //CAMBIO 1
-    #pragma omp parallel
-    {
-        #pragma omp for
-        for (int i = 0; i < limit; ++i) {
-            #pragma omp critical
-            {
-                std::sort(readNumbers, readNumbers + limit);
-            }
-        }
+    #pragma omp parallel for
+    for (int i = 0; i < limit; ++i) {
+        std::sort(readNumbers, readNumbers + limit);
     }
+    
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers.csv");
     for (int i = 0; i < limit; ++i) {
