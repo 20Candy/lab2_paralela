@@ -17,30 +17,33 @@
 
 int compare (const int * a, const int * b) //what is it returning?
 {
-   return ( *(int*)a - *(int*)b ); //What is a and b?
+    return ( *(int*)a - *(int*)b ); //What is a and b?
 }
 
 void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const int*))
 {
-  if(lo > hi) return;
-  int l = lo;
-  int h = hi;
-  int p = data[(hi + lo)/2];
+    if(lo > hi) return;
+    int l = lo;
+    int h = hi;
+    int p = data[(hi + lo)/2];
 
-  while(l <= h){
-    while((data[l] - p) < 0) l++;
-    while((data[h] - p) > 0) h--;
-    if(l<=h){
-      //swap
-      int tmp = data[l];
-      data[l] = data[h];
-      data[h] = tmp;
-      l++; h--;
+    while(l <= h){
+        while((data[l] - p) < 0) l++;
+        while((data[h] - p) > 0) h--;
+        if(l<=h){
+            //swap
+            int tmp = data[l];
+            data[l] = data[h];
+            data[h] = tmp;
+            l++; h--;
+        }
     }
-  }
-  //recursive call
-  par_qsort(data, lo, h);
-  par_qsort(data, l, hi);
+    
+    //recursive call
+    #pragma omp task
+    par_qsort(data, lo, h);
+    #pragma omp task
+    par_qsort(data, l, hi);
 }
 
 // -----MAIN-----
@@ -95,7 +98,11 @@ int main() {
     inFile.close();
 
     // Ordenar los números usando ejemplo de Sebastián
-    par_qsort(readNumbers, 0, N-1);
+    #pragma omp parallel
+    {
+        #pragma omp single nowait
+        par_qsort(readNumbers, 0, N - 1);
+    }
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
