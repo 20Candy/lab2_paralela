@@ -71,10 +71,11 @@ int main() {
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_S.csv");
     for (int i = 0; i < N; ++i) {
-        outFile << numbers[i];
+        std::string output = std::to_string(numbers[i]);
         if (i < N - 1) {
-            outFile << ",";
+            output += ",";
         }
+        outFile << output;
     }
     outFile.close();
 
@@ -99,10 +100,12 @@ int main() {
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_S.csv");
     for (int i = 0; i < N; ++i) {
-        sortedFile << readNumbers[i];
+        std::string output = std::to_string(readNumbers[i]);
         if (i < N - 1) {
-            sortedFile << ",";
+            output += ",";
         }
+
+        sortedFile << output;
     }
     sortedFile.close();
 

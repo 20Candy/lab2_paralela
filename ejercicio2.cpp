@@ -116,7 +116,7 @@ int main() {
         }
 
         #pragma omp ordered                 // Escribir en el archivo en orden
-        outFile << output;
+        sortedFile << output;
     }
 
     sortedFile.close();
