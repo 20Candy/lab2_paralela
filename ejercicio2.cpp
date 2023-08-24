@@ -86,7 +86,6 @@ int main() {
         omp_unset_lock(&fileLock);  // Desbloquear después de escribir en el archivo
     }
 
-    omp_destroy_lock(&fileLock);  // Destruir el lock
     outFile.close();
 
 
@@ -108,10 +107,6 @@ int main() {
 
     // Ordenar los números usando ejemplo de Sebastián
     par_qsort(readNumbers, 0, N - 1);
-
-    // Definir un lock para escribir en el archivo
-    omp_lock_t fileLock;
-    omp_init_lock(&fileLock);  // Inicializar el lock
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
@@ -124,7 +119,7 @@ int main() {
         }
         omp_unset_lock(&fileLock);  // Desbloquear después de escribir en el archivo
     }
-    
+
     omp_destroy_lock(&fileLock);  // Destruir el lock
     sortedFile.close();
 
