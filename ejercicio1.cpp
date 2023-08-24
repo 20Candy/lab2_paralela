@@ -75,10 +75,10 @@ int main() {
     auto end_time = std::chrono::high_resolution_clock::now();
 
     // Calculamos la duración total de la ejecución en segundos
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
     // Imprimimos el tiempo de ejecución en segundos
-    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl;
+    std::cout << "Tiempo de ejecución: " << duration.count() << " microsegundos." << std::endl;
 
     return 0;
 }
