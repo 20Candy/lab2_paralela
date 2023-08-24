@@ -91,12 +91,12 @@ int main() {
 
     // Leer los números en un arreglo
     int* readNumbers = new int[N];
-    #pragma omp parallel for ordered        // CAMBIO 3: Paralelizar el bucle
+    #pragma omp parallel for                    // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
 
-        #pragma omp critical                // Critical: No se lea el mismo número dos veces
-        inFile >> readNumbers[i] >> comma;
+        #pragma omp critical                    // Critical: No se lea el mismo número dos veces
+        inFile >> readNumbers[i] >> comma;      // aún no importa el orden.
     }
     inFile.close();
 
