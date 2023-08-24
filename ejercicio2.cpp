@@ -53,7 +53,7 @@ int main() {
     srand(time(NULL));
 
     // Definir el rango de números aleatorios
-    int N = 10e6;
+    int N = 10e4;
     int posibles_elementos = N/2;
 
     // Declaración y reserva de memoria para 'numbers'
@@ -69,15 +69,13 @@ int main() {
     std::ofstream outFile("random_numbers_P.csv"); 
     #pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
+        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
         outFile << numbers[i];
         if (i < N - 1) {
             outFile << ",";
         }
     }
     outFile.close(); // Cerrar el archivo después del bucle
-
-    // Liberar la memoria
-    delete[] numbers;
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_P.csv");
@@ -91,6 +89,7 @@ int main() {
     #pragma omp parallel for    // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
+        #pragma omp critical    // Critical section para evitar que se lea del archivo al mismo tiempo
         inFile >> readNumbers[i] >> comma;
     }
     inFile.close();
@@ -100,7 +99,9 @@ int main() {
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
+    #pragma omp parallel for    // CAMBIO 4: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
+        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
         sortedFile << readNumbers[i];
         if (i < N - 1) {
             sortedFile << ",";
@@ -109,6 +110,7 @@ int main() {
     sortedFile.close();
 
     // Liberar la memoria
+    delete[] numbers;
     delete[] readNumbers;
 
     // Obtenemos el tiempo de finalización
