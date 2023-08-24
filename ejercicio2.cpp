@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <cmath>
 #include <omp.h>
 #include <chrono>
 
@@ -40,7 +41,7 @@ int main() {
     outFile.close();
 
     // Leer los números desde el archivo
-    std::ifstream inFile("random_numbers.csv");
+    std::ifstream inFile("random_numbers_p.csv");
     if (!inFile) {
         std::cerr << "Error al abrir el archivo para lectura." << std::endl;
         return 1;
@@ -64,7 +65,7 @@ int main() {
     }
 
     // Escribir los números ordenados en otro archivo
-    std::ofstream sortedFile("sorted_numbers.csv");
+    std::ofstream sortedFile("sorted_numbers_p.csv");
     for (int i = 0; i < limit; ++i) {
         sortedFile << readNumbers[i];
         if (i < limit - 1) {
@@ -84,7 +85,7 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
 
     // Imprimimos el tiempo de ejecución en segundos
-    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl
+    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl;
 
 
     return 0;

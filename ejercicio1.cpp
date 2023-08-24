@@ -78,7 +78,7 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
 
     // Imprimimos el tiempo de ejecución en segundos
-    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl
+    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl;
 
     return 0;
 }
