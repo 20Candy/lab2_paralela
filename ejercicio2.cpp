@@ -38,15 +38,27 @@ int main() {
     //     numbers[i] = rand() % 100; // Generar números aleatorios entre 0 y 99
     // }
 
-    // Escribir los números aleatorios en un archivo
-    std::ofstream outFile("random_numbers_p.csv");
+    // // Escribir los números aleatorios en un archivo
+    // std::ofstream outFile("random_numbers_p.csv");
+    // for (int i = 0; i < limit; ++i) {
+    //     outFile << numbers[i];
+    //     if (i < limit - 1) {
+    //         outFile << ",";
+    //     }
+    // }
+    // outFile.close();
+
+    // Escribir los números aleatorios en un archivo en paralelo //CAMBIO3
+    #pragma omp parallel for
     for (int i = 0; i < limit; ++i) {
-        outFile << numbers[i];
-        if (i < limit - 1) {
-            outFile << ",";
+        #pragma omp critical
+        {
+            outFile << numbers[i];
+            if (i < limit - 1) {
+                outFile << ",";
+            }
         }
-    }
-    outFile.close();
+}
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_p.csv");
