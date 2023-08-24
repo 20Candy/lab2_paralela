@@ -32,6 +32,12 @@ int main() {
         numbers[i] = rand() % 100;
     }
 
+    // // Generar N números aleatorios
+    // int* numbers = new int[limit];
+    // for (int i = 0; i < limit; ++i) {
+    //     numbers[i] = rand() % 100; // Generar números aleatorios entre 0 y 99
+    // }
+
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_p.csv");
     for (int i = 0; i < limit; ++i) {
