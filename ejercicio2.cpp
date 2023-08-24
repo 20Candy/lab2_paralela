@@ -101,6 +101,7 @@ int main() {
     #pragma omp parallel for    // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
+        #pragma omp critical
         inFile >> readNumbers[i] >> comma;
     }
     inFile.close();
