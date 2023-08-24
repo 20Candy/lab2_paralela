@@ -9,8 +9,13 @@
 #include <ctime>
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 
 int main() {
+
+    // Obtenemos el tiempo de inicio
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     // Configuración inicial
     srand(time(NULL)); // Inicialización del generador de números aleatorios basado en la hora actual
 
@@ -65,6 +70,15 @@ int main() {
     // Liberar la memoria
     delete[] numbers;
     delete[] readNumbers;
+
+    // Obtenemos el tiempo de finalización
+    auto end_time = std::chrono::high_resolution_clock::now();
+
+    // Calculamos la duración total de la ejecución en segundos
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+
+    // Imprimimos el tiempo de ejecución en segundos
+    std::cout << "Tiempo de ejecución: " << duration.count() << " segundos." << std::endl
 
     return 0;
 }
