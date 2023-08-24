@@ -95,7 +95,6 @@ int main() {
         #pragma omp critical                // Critical: Solo un hilo escribe a la vez
         outFile << localBuffer;             // Se escribe el buffer del hilo en el archivo.
     }
-    outFile.close();
 
     // ------------ORIGINAL (CAMBIO 2)----------------
     // std::ofstream outFile("random_numbers_S.csv");
@@ -105,9 +104,10 @@ int main() {
         
     //     outFile << output;
     // }
-    // outFile.close();
 
 
+
+    outFile.close();
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_P.csv");
@@ -128,20 +128,41 @@ int main() {
     }
     inFile.close();
 
+    // ------------ORIGINAL (CAMBIO 3)----------------
+
+
+
+
     // Ordenar los números usando ejemplo de Sebastián
     par_qsort(readNumbers, 0, N - 1);
     
-
+    // ------------CAMBIO 4----------------
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
-    #pragma omp parallel for ordered         // CAMBIO 4: Paralelizar el bucle
-    for (int i = 0; i < N; ++i) {
-        std::string output = std::to_string(readNumbers[i]);
-        output += ",";
+    #pragma omp parallel                    // CAMBIO 4: Paralelizar el bucle en bloques
+    {                  
+        std::string localBuffer2;           // Cada hilo tiene su propio buffer
 
-        #pragma omp ordered                 // Ordered: Solo escriba un hilo a la vez, y en orden
-        sortedFile << output;
+        #pragma omp for ordered             // Se paraleliza el bucle, SI importa el orden
+        for (int i = 0; i < N; ++i) {
+            localBuffer2 += std::to_string(numbers[i]);      // Cada hilo escribe en su buffer
+            localBuffer2 += ",";
+        }
+
+        #pragma omp ordered                     // Ordered: Se escriben los buffers en orden
+        sortedFile << localBuffer2;             // Se escribe el buffer del hilo en el archivo.
     }
+
+    // ------------ORIGINAL (CAMBIO 4)----------------
+    // std::ofstream sortedFile("sorted_numbers_S.csv");
+    // for (int i = 0; i < N; ++i) {
+    //     std::string output = std::to_string(readNumbers[i]);
+    //     output += ",";
+        
+    //     sortedFile << output;
+    // }
+
+
 
     sortedFile.close();
 
