@@ -31,15 +31,18 @@ void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const
     // ------------CAMBIO - VERSION 2----------------
     #pragma omp parallel                // Se paraleliza el bloque
     {
-        while (l <= h) {
-            while ((data[l] - p) < 0) l++;
-            while ((data[h] - p) > 0) h--;
-            if (l <= h) {
-                // Swap
-                int tmp = data[l];
-                data[l] = data[h];
-                data[h] = tmp;
-                l++; h--;
+        #pragma omp single              // Solamente un hilo ejecuta el bloque
+        {
+            while (l <= h) {
+                while ((data[l] - p) < 0) l++;
+                while ((data[h] - p) > 0) h--;
+                if (l <= h) {
+                    // Swap
+                    int tmp = data[l];
+                    data[l] = data[h];
+                    data[h] = tmp;
+                    l++; h--;
+                }
             }
         }
 
