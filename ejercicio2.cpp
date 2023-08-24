@@ -77,8 +77,8 @@ int main() {
         std::string output = std::to_string(numbers[i]);
         output += ",";
 
-        #pragma omp ordered                 // Critical: Solo escriba un hilo a la vez
-        outFile << output;
+        #pragma omp critical                // Critical: Solo escriba un hilo a la vez
+        outFile << output;                  // aún no importa el orden.
     }
     outFile.close();
 
