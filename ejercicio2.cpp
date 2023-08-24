@@ -82,18 +82,20 @@ int main() {
     // ------------CAMBIO 2----------------
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv");
-    #pragma omp parallel                    // Paralelizar el bucle en bloques
+    #pragma omp parallel                    // Paralelizar en bloques
     {                  
         std::string localBuffer;            // Cada hilo tiene su propio buffer
                                             // No importa el orden de como se escriba en el archivo.
 
-        #pragma omp for                     // Se paraleliza el bucle
+        #pragma omp for reduction(+ : localBuffer)  // Se paraleliza el bucle. Reduction para evitar race conditions
         for (int i = 0; i < N; ++i) {
-            localBuffer += std::to_string(numbers[i]);      // Cada hilo escribe en su buffer
-            localBuffer += ",";
+            std::string output = std::to_string(numbers[i]);
+            output += ",";
+
+            localBuffer += output;          // Cada hilo escribe en su buffer
         }
 
-        #pragma omp critical                // Critical: Solo un hilo escribe a la vez
+        #pragma omp critical                // Critical: Solo un hilo escribe a la vez su buffer
         outFile << localBuffer;
     }
 
@@ -179,7 +181,7 @@ int main() {
         }
     }
 
-    delete[] localBuffers;
+    delete[] localBuffers;          // Liberar memoria
     sortedFile.close();
 
     // ------------ORIGINAL (CAMBIO 4)----------------
