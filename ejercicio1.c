@@ -1,3 +1,8 @@
+// Universidad del Valle de Guatemala
+// Computación Paralela y Distribuida
+// Stefano Aragoni, Carol Arevalo
+// 23/08/2023
+
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -5,54 +10,58 @@
 #include <algorithm>
 
 int main() {
-    srand(time(NULL)); // Seed the random number generator with the current time
+    // Configuración inicial
+    srand(time(NULL)); // Inicialización del generador de números aleatorios basado en la hora actual
 
-    // Generate N random numbers
-    int N = 20; // You can change this to the desired number of random numbers
-    int* numbers = new int[N];
-    for (int i = 0; i < N; ++i) {
-        numbers[i] = rand() % 100; // Generate random numbers between 0 and 99
+    // Definir el rango de números aleatorios
+    int exponente = 2; // Exponente para determinar el tamaño del rango de números
+    int limit = pow(10, exponente);
+
+    // Generar N números aleatorios
+    int* numbers = new int[limit];
+    for (int i = 0; i < limit; ++i) {
+        numbers[i] = rand() % 100; // Generar números aleatorios entre 0 y 99
     }
 
-    // Write the random numbers to a file
-    std::ofstream outFile("random_numbers.txt");
-    for (int i = 0; i < N; ++i) {
+    // Escribir los números aleatorios en un archivo
+    std::ofstream outFile("random_numbers.csv");
+    for (int i = 0; i < limit; ++i) {
         outFile << numbers[i];
-        if (i < N - 1) {
+        if (i < limit - 1) {
             outFile << ",";
         }
     }
     outFile.close();
 
-    // Read the numbers from the file
-    std::ifstream inFile("random_numbers.txt");
+    // Leer los números desde el archivo
+    std::ifstream inFile("random_numbers.csv");
     if (!inFile) {
-        std::cerr << "Error opening file for reading." << std::endl;
+        std::cerr << "Error al abrir el archivo para lectura." << std::endl;
         return 1;
     }
 
-    // Read the numbers into an array
-    int* readNumbers = new int[N];
-    for (int i = 0; i < N; ++i) {
+    // Leer los números en un arreglo
+    int* readNumbers = new int[limit];
+    for (int i = 0; i < limit; ++i) {
         char comma;
         inFile >> readNumbers[i] >> comma;
     }
     inFile.close();
 
-    // Sort the numbers
-    std::sort(readNumbers, readNumbers + N);
+    // Ordenar los números
+    std::sort(readNumbers, readNumbers + limit);
 
-    // Write the sorted numbers to another file
-    std::ofstream sortedFile("sorted_numbers.txt");
-    for (int i = 0; i < N; ++i) {
+    // Escribir los números ordenados en otro archivo
+    std::ofstream sortedFile("sorted_numbers.csv");
+    for (int i = 0; i < limit; ++i) {
         sortedFile << readNumbers[i];
-        if (i < N - 1) {
+        if (i < limit - 1) {
             sortedFile << ",";
         }
     }
     sortedFile.close();
 
-    // Clean up memory
+    // Liberar la memoria
     delete[] numbers;
     delete[] readNumbers;
 
