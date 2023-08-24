@@ -60,14 +60,14 @@ int main() {
     int* numbers = new int[N]; 
 
     // Generar N números aleatorios en paralelo 
-    #pragma omp parallel for    //CAMBIO 1
+    #pragma omp parallel for    //CAMBIO 1: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         numbers[i] = rand()%(posibles_elementos)+1;
     }
 
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv"); 
-    #pragma omp parallel for    // CAMBIO 2
+    #pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         outFile << numbers[i];
         if (i < N - 1) {
@@ -85,6 +85,7 @@ int main() {
 
     // Leer los números en un arreglo
     int* readNumbers = new int[N];
+    #pragma omp parallel for    // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
         inFile >> readNumbers[i] >> comma;
