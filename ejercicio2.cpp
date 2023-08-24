@@ -52,6 +52,10 @@ int main() {
     // Obtenemos el tiempo de inicio
     auto start_time = std::chrono::high_resolution_clock::now();
 
+    // Seed basado en la hora actual
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
     // Definir el rango de números aleatorios
     int N = 10e6;
     int posibles_elementos = N/2;
