@@ -11,57 +11,91 @@
 #include <cmath>
 #include <chrono>
 
+// -----QUICK SORT-----
+// Funciones proveídas por Sebastián.
+
+int compare (const int * a, const int * b) //what is it returning?
+{
+   return ( *(int*)a - *(int*)b ); //What is a and b?
+}
+
+void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const int*))
+{
+  if(lo > hi) return;
+  int l = lo;
+  int h = hi;
+  int p = data[(hi + lo)/2];
+
+  while(l <= h){
+    while((data[l] - p) < 0) l++;
+    while((data[h] - p) > 0) h--;
+    if(l<=h){
+      //swap
+      int tmp = data[l];
+      data[l] = data[h];
+      data[h] = tmp;
+      l++; h--;
+    }
+  }
+  //recursive call
+  par_qsort(data, lo, h);
+  par_qsort(data, l, hi);
+}
+
+// -----MAIN-----
 int main() {
 
     // Obtenemos el tiempo de inicio
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Configuración inicial
-    srand(time(NULL)); // Inicialización del generador de números aleatorios basado en la hora actual
+    // Seed basado en la hora actual
+    srand(time(NULL)); 
 
     // Definir el rango de números aleatorios
-    int exponente = 2; // Exponente para determinar el tamaño del rango de números
-    int limit = pow(10, exponente);
+    int N = 10e3;
+    int posibles_elementos = N/2;
+
+    // Declaración y reserva de memoria para 'numbers'
+    int* numbers = new int[N];      
 
     // Generar N números aleatorios
-    int* numbers = new int[limit];
-    for (int i = 0; i < limit; ++i) {
-        numbers[i] = rand() % 100; // Generar números aleatorios entre 0 y 99
+    for (int i = 0; i < N; ++i) {
+        numbers[i] = rand()%(posibles_elementos)+1;
     }
 
     // Escribir los números aleatorios en un archivo
-    std::ofstream outFile("random_numbers.csv");
-    for (int i = 0; i < limit; ++i) {
+    std::ofstream outFile("random_numbers_S.csv");
+    for (int i = 0; i < N; ++i) {
         outFile << numbers[i];
-        if (i < limit - 1) {
+        if (i < N - 1) {
             outFile << ",";
         }
     }
     outFile.close();
 
     // Leer los números desde el archivo
-    std::ifstream inFile("random_numbers.csv");
+    std::ifstream inFile("random_numbers_S.csv");
     if (!inFile) {
         std::cerr << "Error al abrir el archivo para lectura." << std::endl;
         return 1;
     }
 
     // Leer los números en un arreglo
-    int* readNumbers = new int[limit];
-    for (int i = 0; i < limit; ++i) {
+    int* readNumbers = new int[N];
+    for (int i = 0; i < N; ++i) {
         char comma;
         inFile >> readNumbers[i] >> comma;
     }
     inFile.close();
 
-    // Ordenar los números
-    std::sort(readNumbers, readNumbers + limit);
+    // Ordenar los números usando ejemplo de Sebastián
+    par_qsort(readNumbers, 0, N-1);
 
     // Escribir los números ordenados en otro archivo
-    std::ofstream sortedFile("sorted_numbers.csv");
-    for (int i = 0; i < limit; ++i) {
+    std::ofstream sortedFile("sorted_numbers_S.csv");
+    for (int i = 0; i < N; ++i) {
         sortedFile << readNumbers[i];
-        if (i < limit - 1) {
+        if (i < N - 1) {
             sortedFile << ",";
         }
     }
