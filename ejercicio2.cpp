@@ -75,11 +75,9 @@ int main() {
     #pragma omp parallel for                // CAMBIO 2: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         std::string output = std::to_string(numbers[i]);
-        if (i < N - 1) {
-            output += ",";
-        }
+        output += ",";
 
-        #pragma omp critical                 // Critical: Solo escriba un hilo a la vez
+        #pragma omp ordered                 // Critical: Solo escriba un hilo a la vez
         outFile << output;
     }
     outFile.close();
@@ -96,7 +94,8 @@ int main() {
     #pragma omp parallel for ordered        // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
-        #pragma omp critical                // Sección crítica para leer el archivo
+
+        #pragma omp critical                // Critical: No se lea el mismo número dos veces
         inFile >> readNumbers[i] >> comma;
     }
     inFile.close();
@@ -110,11 +109,9 @@ int main() {
     #pragma omp parallel for ordered         // CAMBIO 4: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         std::string output = std::to_string(readNumbers[i]);
-        if (i < N - 1) {
-            output += ",";
-        }
+        output += ",";
 
-        #pragma omp ordered                 // Escribir en el archivo en orden
+        #pragma omp ordered                 // Ordered: Solo escriba un hilo a la vez, y en orden
         sortedFile << output;
     }
 

@@ -72,9 +72,8 @@ int main() {
     std::ofstream outFile("random_numbers_S.csv");
     for (int i = 0; i < N; ++i) {
         std::string output = std::to_string(numbers[i]);
-        if (i < N - 1) {
-            output += ",";
-        }
+        output += ",";
+        
         outFile << output;
     }
     outFile.close();
@@ -101,10 +100,8 @@ int main() {
     std::ofstream sortedFile("sorted_numbers_S.csv");
     for (int i = 0; i < N; ++i) {
         std::string output = std::to_string(readNumbers[i]);
-        if (i < N - 1) {
-            output += ",";
-        }
-
+        output += ",";
+        
         sortedFile << output;
     }
     sortedFile.close();
