@@ -57,7 +57,7 @@ int main() {
     std::mt19937 gen(seed);
 
     // Definir el rango de números aleatorios
-    int N = 10e6;
+    int N = 10e2;
     int posibles_elementos = N/2;
 
     // Declaración y reserva de memoria para 'numbers'
