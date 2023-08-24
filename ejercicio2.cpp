@@ -82,7 +82,8 @@ int main() {
     // ------------CAMBIO 2----------------
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv");
-    #pragma omp parallel {                  // CAMBIO 2: Paralelizar el bucle
+    #pragma omp parallel                    // CAMBIO 2: Paralelizar el bucle en bloques
+    {                  
         std::string localBuffer;            // Cada hilo tiene su propio buffer
 
         #pragma omp for                     // Se paraleliza el bucle, no importa el orden
