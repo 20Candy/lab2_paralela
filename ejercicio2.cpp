@@ -65,7 +65,7 @@ int main() {
 
     // ------------CAMBIO 1----------------
     // Generar N números aleatorios en paralelo 
-    #pragma omp parallel for                //CAMBIO 1: Paralelizar el bucle
+    #pragma omp parallel for                // Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         std::uniform_int_distribution<int> distribution(1, posibles_elementos);
         numbers[i] = distribution(gen);
@@ -82,11 +82,12 @@ int main() {
     // ------------CAMBIO 2----------------
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv");
-    #pragma omp parallel                    // CAMBIO 2: Paralelizar el bucle en bloques
+    #pragma omp parallel                    // Paralelizar el bucle en bloques
     {                  
         std::string localBuffer;            // Cada hilo tiene su propio buffer
+                                            // No importa el orden de como se escriba en el archivo.
 
-        #pragma omp for                     // Se paraleliza el bucle, no importa el orden
+        #pragma omp for                     // Se paraleliza el bucle
         for (int i = 0; i < N; ++i) {
             localBuffer += std::to_string(numbers[i]);      // Cada hilo escribe en su buffer
             localBuffer += ",";
@@ -119,7 +120,7 @@ int main() {
     // ------------CAMBIO 3----------------
     // Leer los números en un arreglo
     int* readNumbers = new int[N];
-    #pragma omp parallel for                    // CAMBIO 3: Paralelizar el bucle
+    #pragma omp parallel for                    // Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
         int num;
@@ -150,14 +151,36 @@ int main() {
     // ------------CAMBIO 4----------------
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_S.csv");
-    #pragma omp parallel for ordered                // CAMBIO 4: Paralelizar el bucle (ordenado)
-    for (int i = 0; i < N; ++i) {
-        std::string output = std::to_string(readNumbers[i]);
-        output += ",";
-        
-        #pragma omp ordered                         // Ordered: Se escribe en orden
-        sortedFile << output;                           
+
+    int num_hilos = omp_get_max_threads();              // Número de hilos
+    int nums_bloque = ceil((double)N / num_hilos);      // Números por bloque
+
+    std::string* localBuffers = new std::string[num_hilos];     // Buffer local para cada hilo
+
+    #pragma omp parallel                        
+    {
+        int ID = omp_get_thread_num();                  // ID del hilo
+        int inicio = ID * nums_bloque;                  // Inicio del bloque
+        int fin = std::min(inicio + nums_bloque, N);    // Fin del bloque
+
+        for (int i = inicio; i < fin; ++i) {
+            localBuffers[ID] += std::to_string(readNumbers[i]);     // Cada hilo escribe en su buffer
+            localBuffers[ID] += ",";                                // Escribe los números en orden
+        }
+
+        #pragma omp barrier             // Esperar a que todos los hilos terminen de
+                                        // llenar los buffers locales (con numeros ordenados)
+
+        #pragma omp master              // Solo el hilo master escribe al archivo
+        {
+            for (int i = 0; i < num_hilos; ++i) {
+                sortedFile << localBuffers[i];          // Garantiza el orden de los números
+            }
+        }
     }
+
+    delete[] localBuffers;
+    sortedFile.close();
 
     // ------------ORIGINAL (CAMBIO 4)----------------
     // std::ofstream sortedFile("sorted_numbers_S.csv");
