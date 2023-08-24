@@ -9,6 +9,7 @@
 #include <ctime>
 #include <algorithm>
 #include <omp.h>
+#include <cmath>
 #include <chrono>
 
 int main() {
@@ -30,7 +31,7 @@ int main() {
     }
 
     // Escribir los números aleatorios en un archivo
-    std::ofstream outFile("random_numbers.csv");
+    std::ofstream outFile("random_numbers_p.csv");
     for (int i = 0; i < limit; ++i) {
         outFile << numbers[i];
         if (i < limit - 1) {
@@ -40,7 +41,7 @@ int main() {
     outFile.close();
 
     // Leer los números desde el archivo
-    std::ifstream inFile("random_numbers.csv");
+    std::ifstream inFile("random_numbers_p.csv");
     if (!inFile) {
         std::cerr << "Error al abrir el archivo para lectura." << std::endl;
         return 1;
