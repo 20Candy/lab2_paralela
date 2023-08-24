@@ -95,7 +95,7 @@ int main() {
         int fin = std::min(inicio + nums_bloque, N);    // Fin del bloque
 
         for (int i = inicio; i < fin; ++i) {
-            localBuffers1[ID] += std::to_string(readNumbers[i]);     // Cada hilo escribe en su buffer
+            localBuffers1[ID] += std::to_string(numbers[i]);     // Cada hilo escribe en su buffer
             localBuffers1[ID] += ",";                                // Escribe los números en orden
         }
 
@@ -111,7 +111,7 @@ int main() {
     }
 
     delete[] localBuffers1;          // Liberar memoria
-    sortedFile.close();
+    outFile.close();
 
     // ------------ORIGINAL (CAMBIO 2 - VERSION 1)----------------
     // std::ofstream outFile("random_numbers_S.csv");
