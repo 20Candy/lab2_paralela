@@ -23,39 +23,37 @@ int compare (const int * a, const int * b) //what is it returning?
 
 void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const int*))
 {
-     if(lo > hi) return;
+    if(lo > hi) return;
     int l = lo;
     int h = hi;
     int p = data[(hi + lo)/2];
 
-    // ------------CAMBIO - VERSION 2----------------
-    #pragma omp parallel                // Se paraleliza el bloque
-    {
-        #pragma omp single              // Solamente un hilo ejecuta el bloque
-        {
-            while (l <= h) {
-                while ((data[l] - p) < 0) l++;
-                while ((data[h] - p) > 0) h--;
-                if (l <= h) {
-                    // Swap
-                    int tmp = data[l];
-                    data[l] = data[h];
-                    data[h] = tmp;
-                    l++; h--;
-                }
-            }
-        }
-
-        #pragma omp sections                // Crea dos secciones paralelas para ordenar los dos bloques
-        {
-            par_qsort(data, lo, h);       
-        }
-       
-        #pragma omp sections
-        {
-            par_qsort(data, l, hi);
+    while (l <= h) {
+        while ((data[l] - p) < 0) l++;
+        while ((data[h] - p) > 0) h--;
+        if (l <= h) {
+            // Swap
+            int tmp = data[l];
+            data[l] = data[h];
+            data[h] = tmp;
+            l++; h--;
         }
     }
+        
+    // ------------CAMBIO - VERSION 2----------------
+    #pragma omp parallel
+    {
+        #pragma omp sections                // Crea dos secciones paralelas para ordenar los dos bloques
+        {
+            par_qsort(data, lo, h);         // Ordena el bloque izquierdo
+        }
+        
+        #pragma omp sections
+        {
+            par_qsort(data, l, hi);         // Ordena el bloque derecho
+        }
+    }
+
 }
 
 // -----MAIN-----
