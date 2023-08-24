@@ -24,10 +24,10 @@ int main() {
     int exponente = 2; // Exponente para determinar el tamaño del rango de números
     int limit = pow(10, exponente);
 
-    // Generar N números aleatorios
-    int* numbers = new int[limit];
+    // Generar N números aleatorios en paralelo //CAMBIO 2
+    #pragma omp parallel for
     for (int i = 0; i < limit; ++i) {
-        numbers[i] = rand() % 100; // Generar números aleatorios entre 0 y 99
+        numbers[i] = rand() % 100;
     }
 
     // Escribir los números aleatorios en un archivo
