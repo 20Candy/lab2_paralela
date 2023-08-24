@@ -49,16 +49,16 @@ int main() {
     // outFile.close();
 
     // Escribir los números aleatorios en un archivo en paralelo //CAMBIO3
+    std::ofstream outFile("random_numbers_p.csv"); // Declarar y abrir el archivo
     #pragma omp parallel for
     for (int i = 0; i < limit; ++i) {
-        #pragma omp critical
-        {
-            outFile << numbers[i];
-            if (i < limit - 1) {
-                outFile << ",";
-            }
+        outFile << numbers[i];
+        if (i < limit - 1) {
+            outFile << ",";
         }
-}
+    }
+    outFile.close(); // Cerrar el archivo después del bucle
+
 
     // Leer los números desde el archivo
     std::ifstream inFile("random_numbers_p.csv");
