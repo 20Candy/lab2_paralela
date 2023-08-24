@@ -11,6 +11,7 @@
 #include <omp.h>
 #include <cmath>
 #include <chrono>
+#include <random>
 
 // -----QUICK SORT-----
 // Funciones proveídas por Sebastián.
@@ -51,9 +52,6 @@ int main() {
     // Obtenemos el tiempo de inicio
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Seed basado en la hora actual
-    srand(time(NULL));
-
     // Definir el rango de números aleatorios
     int N = 10e6;
     int posibles_elementos = N/2;
@@ -64,7 +62,8 @@ int main() {
     // Generar N números aleatorios en paralelo 
     #pragma omp parallel for    //CAMBIO 1: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
-        numbers[i] = rand()%(posibles_elementos)+1;
+        std::uniform_int_distribution<int> distribution(1, posibles_elementos);
+        numbers[i] = distribution(gen);
     }
 
     // Escribir los números aleatorios en un archivo
