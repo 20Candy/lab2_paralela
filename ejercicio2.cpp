@@ -72,9 +72,9 @@ int main() {
 
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv"); 
-    //#pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
+    #pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
-        //#pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
+        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
         outFile << numbers[i];
         if (i < N - 1) {
             outFile << ",";
