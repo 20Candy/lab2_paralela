@@ -95,8 +95,8 @@ int main() {
         int fin = std::min(inicio + nums_bloque, N);    // Fin del bloque
 
         for (int i = inicio; i < fin; ++i) {
-            localBuffers[ID] += std::to_string(readNumbers[i]);     // Cada hilo escribe en su buffer
-            localBuffers[ID] += ",";                                // Escribe los números en orden
+            localBuffers1[ID] += std::to_string(readNumbers[i]);     // Cada hilo escribe en su buffer
+            localBuffers1[ID] += ",";                                // Escribe los números en orden
         }
 
         #pragma omp barrier             // Esperar a que todos los hilos terminen de
