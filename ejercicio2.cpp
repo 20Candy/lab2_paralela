@@ -82,23 +82,36 @@ int main() {
     // ------------CAMBIO 2 - VERSION 1----------------
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv");
-    #pragma omp parallel                    // Paralelizar en bloques
-    {                  
-        std::string localBuffer;            // Cada hilo tiene su propio buffer
-                                            // No importa el orden de como se escriba en el archivo.
 
-        #pragma omp for  // Se paraleliza el bucle.
-        for (int i = 0; i < N; ++i) {
-            std::string output = std::to_string(numbers[i]);
-            output += ",";
+    int num_hilos = omp_get_max_threads();              // Número de hilos
+    int nums_bloque = ceil((double)N / num_hilos);      // Números por bloque
 
-            #pragma omp critical            // Critical: Solo un hilo escribe a la vez su buffer
-            localBuffer += output;          // Cada hilo escribe en su buffer
+    std::string* localBuffers1 = new std::string[num_hilos];     // Buffer local para cada hilo
+
+    #pragma omp parallel                        
+    {
+        int ID = omp_get_thread_num();                  // ID del hilo
+        int inicio = ID * nums_bloque;                  // Inicio del bloque
+        int fin = std::min(inicio + nums_bloque, N);    // Fin del bloque
+
+        for (int i = inicio; i < fin; ++i) {
+            localBuffers[ID] += std::to_string(readNumbers[i]);     // Cada hilo escribe en su buffer
+            localBuffers[ID] += ",";                                // Escribe los números en orden
         }
 
-        #pragma omp critical                // Critical: Solo un hilo escribe a la vez su buffer
-        outFile << localBuffer;
+        #pragma omp barrier             // Esperar a que todos los hilos terminen de
+                                        // llenar los buffers locales (con numeros ordenados)
+
+        #pragma omp master              // Solo el hilo master escribe al archivo
+        {
+            for (int i = 0; i < num_hilos; ++i) {
+                outFile << localBuffers1[i];          // Garantiza el orden de los números
+            }
+        }
     }
+
+    delete[] localBuffers1;          // Liberar memoria
+    sortedFile.close();
 
     // ------------ORIGINAL (CAMBIO 2 - VERSION 1)----------------
     // std::ofstream outFile("random_numbers_S.csv");
@@ -155,8 +168,8 @@ int main() {
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_S.csv");
 
-    int num_hilos = omp_get_max_threads();              // Número de hilos
-    int nums_bloque = ceil((double)N / num_hilos);      // Números por bloque
+    num_hilos = omp_get_max_threads();              // Número de hilos
+    nums_bloque = ceil((double)N / num_hilos);      // Números por bloque
 
     std::string* localBuffers = new std::string[num_hilos];     // Buffer local para cada hilo
 
