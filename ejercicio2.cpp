@@ -43,11 +43,15 @@ void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const
             }
         }
 
-        #pragma omp sections                // Crea dos secciones paralelas
-        par_qsort(data, lo, h);             // para ordenar los dos bloques
-
+        #pragma omp sections                // Crea dos secciones paralelas para ordenar los dos bloques
+        {
+            par_qsort(data, lo, h);       
+        }
+       
         #pragma omp sections
-        par_qsort(data, l, hi);
+        {
+            par_qsort(data, l, hi);
+        }
     }
 }
 
