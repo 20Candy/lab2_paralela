@@ -54,7 +54,7 @@ int main() {
     srand(time(NULL)); 
 
     // Definir el rango de números aleatorios
-    int N = 10e3;
+    int N = 10e6;
     int posibles_elementos = N/2;
 
     // Declaración y reserva de memoria para 'numbers'

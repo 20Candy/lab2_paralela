@@ -53,7 +53,7 @@ int main() {
     srand(time(NULL));
 
     // Definir el rango de números aleatorios
-    int N = 10e3;
+    int N = 10e6;
     int posibles_elementos = N/2;
 
     // Declaración y reserva de memoria para 'numbers'
@@ -97,6 +97,7 @@ int main() {
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
+    #pragma omp parallel for    // CAMBIO 4: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         sortedFile << readNumbers[i];
         if (i < N - 1) {
