@@ -87,11 +87,12 @@ int main() {
         std::string localBuffer;            // Cada hilo tiene su propio buffer
                                             // No importa el orden de como se escriba en el archivo.
 
-        #pragma omp for reduction(+ : localBuffer)  // Se paraleliza el bucle. Reduction para evitar race conditions
+        #pragma omp for  // Se paraleliza el bucle.
         for (int i = 0; i < N; ++i) {
             std::string output = std::to_string(numbers[i]);
             output += ",";
 
+            #pragma omp critical            // Critical: Solo un hilo escribe a la vez su buffer
             localBuffer += output;          // Cada hilo escribe en su buffer
         }
 
