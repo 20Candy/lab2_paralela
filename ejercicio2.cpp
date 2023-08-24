@@ -40,10 +40,14 @@ void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const
     }
     
     //recursive call
-    #pragma omp task
-    par_qsort(data, lo, h);
-    #pragma omp task
-    par_qsort(data, l, hi);
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        par_qsort(data, lo, h);
+        #pragma omp section
+        par_qsort(data, l, hi);
+    }
+
 }
 
 // -----MAIN-----
@@ -70,9 +74,9 @@ int main() {
 
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_P.csv"); 
-    #pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
+    //#pragma omp parallel for    // CAMBIO 2: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
-        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
+        //#pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
         outFile << numbers[i];
         if (i < N - 1) {
             outFile << ",";
@@ -89,10 +93,10 @@ int main() {
 
     // Leer los números en un arreglo
     int* readNumbers = new int[N];
-    #pragma omp parallel for    // CAMBIO 3: Paralelizar el bucle
+    //#pragma omp parallel for    // CAMBIO 3: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
         char comma;
-        #pragma omp critical    // Critical section para evitar que se lea del archivo al mismo tiempo
+        //#pragma omp critical    // Critical section para evitar que se lea del archivo al mismo tiempo
         inFile >> readNumbers[i] >> comma;
     }
     inFile.close();
@@ -106,9 +110,9 @@ int main() {
     
     // Escribir los números ordenados en otro archivo
     std::ofstream sortedFile("sorted_numbers_P.csv");
-    #pragma omp parallel for    // CAMBIO 4: Paralelizar el bucle
+    //#pragma omp parallel for    // CAMBIO 4: Paralelizar el bucle
     for (int i = 0; i < N; ++i) {
-        #pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
+        //#pragma omp critical    // Critical section para evitar que se escriba en el archivo al mismo tiempo
         sortedFile << readNumbers[i];
         if (i < N - 1) {
             sortedFile << ",";
