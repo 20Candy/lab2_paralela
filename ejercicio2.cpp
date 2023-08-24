@@ -24,13 +24,14 @@ int main() {
     int exponente = 2; // Exponente para determinar el tamaño del rango de números
     int limit = pow(10, exponente);
 
+    int* numbers = new int[limit]; // Declaración y reserva de memoria para 'numbers'
+
+
     // Generar N números aleatorios en paralelo //CAMBIO 2
     #pragma omp parallel for
     for (int i = 0; i < limit; ++i) {
         numbers[i] = rand() % 100;
     }
-
-    int* numbers = new int[limit]; // Declaración y reserva de memoria para 'numbers'
 
     // Escribir los números aleatorios en un archivo
     std::ofstream outFile("random_numbers_p.csv");
