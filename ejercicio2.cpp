@@ -99,15 +99,8 @@ int main() {
             localBuffers1[ID] += ",";                                // Escribe los números en orden
         }
 
-        #pragma omp barrier             // Esperar a que todos los hilos terminen de
-                                        // llenar los buffers locales (con numeros ordenados)
-
-        #pragma omp master              // Solo el hilo master escribe al archivo
-        {
-            for (int i = 0; i < num_hilos; ++i) {
-                outFile << localBuffers1[i];          // Garantiza el orden de los números
-            }
-        }
+        #pragma omp critical                // Critical: Solo un hilo escribe a la vez
+        outFile << localBuffers1[ID];       // Cada hilo escribe su buffer en el archivo
     }
 
     delete[] localBuffers1;          // Liberar memoria
