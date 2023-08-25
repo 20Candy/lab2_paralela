@@ -104,7 +104,6 @@ int main() {
     }
 
     delete[] localBuffers1;          // Liberar memoria
-    outFile.close();
 
     // ------------ORIGINAL (CAMBIO 2 - VERSION 1)----------------
     // std::ofstream outFile("random_numbers_S.csv");
@@ -189,7 +188,6 @@ int main() {
     }
 
     delete[] localBuffers;          // Liberar memoria
-    sortedFile.close();
 
     // ------------ORIGINAL (CAMBIO 4 - VERSION 1)----------------
     // std::ofstream sortedFile("sorted_numbers_S.csv");
