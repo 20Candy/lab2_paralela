@@ -1,0 +1,17 @@
+para compilar secuencial:
+
+g++ -o ejercicio1 ejercicio1.cpp -lm        
+
+para ejecutar secuencial:
+
+./ejercicio1
+
+---------------------------------------------
+
+para compilar paralelo:
+
+g++ -o ejercicio2 ejercicio2.cpp -lm -fopenmp       // -fopenmp es para que compile con openmp
+
+para ejecutar paralelo:
+
+./ejercicio2
