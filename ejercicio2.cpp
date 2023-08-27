@@ -40,7 +40,10 @@ void par_qsort(int *data, int lo, int hi) //}, int (*compare)(const int *, const
         }
     }
         
-    // Recursive call
+    // Recursive call 
+
+    // Se intentó paralelizar esto con parallel sections, pero no mejoró el speedup. 
+    // Se dejó como estaba originalmente.         
     par_qsort(data, lo, h);
     par_qsort(data, l, hi);
 
